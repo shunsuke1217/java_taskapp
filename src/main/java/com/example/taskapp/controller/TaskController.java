@@ -18,7 +18,7 @@ public class TaskController {
     public String list(Model model){
         // taskRepositoryに保存されているタスクを全て取得してHTMLに渡すためにmodel.tasksに追加する
         model.addAttribute("tasks", taskRepository.findAll());
-        return "index";
+        return "tasks/list";
     }
 
 }
