@@ -4,7 +4,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import com.example.taskapp.repository.TaskRepository;
 import org.springframework.web.bind.annotation.GetMapping;
-
+import org.springframework.web.bind.annotation.PostMapping;
+import com.example.taskapp.entity.Task;
+import jakarta.validation.Valid;
+import org.springframework.validation.BindingResult;
 
 @Controller
 public class TaskController {
@@ -20,5 +23,24 @@ public class TaskController {
         model.addAttribute("tasks", taskRepository.findAll());
         return "tasks/list";
     }
+    @PostMapping("/tasks")
+    public String create(@Valid Task task, BindingResult result){
+        if(result.hasErrors()){
+            return "tasks/new";
+        }
+        taskRepository.save(task);
+        return "redirect:/tasks";
+    }
+    @GetMapping("/tasks/new")
+    public String newTask(Model model){
+        model.addAttribute("task",new Task());
+        return "tasks/new";
+    }
+    @PostMapping("/tasks/{id}/delete")
+    public String delete(Task task){
+        taskRepository.deleteById(task.getId());
+        return "redirect:/tasks";
+    }
+    
 
 }
