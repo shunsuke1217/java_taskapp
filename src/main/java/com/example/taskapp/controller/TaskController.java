@@ -24,7 +24,7 @@ public class TaskController {
         model.addAttribute("tasks", taskRepository.findAll());
         return "tasks/list";
     }
-    // タスクの作成
+    // タスクの登録
     @PostMapping("/tasks")
     public String create(@Valid Task task, BindingResult result){
         if(result.hasErrors()){
@@ -33,7 +33,7 @@ public class TaskController {
         taskRepository.save(task);
         return "redirect:/tasks";
     }
-    //タスクの登録
+    //タスク作成画面
     @GetMapping("/tasks/new")
     public String newTask(Model model){
         model.addAttribute("task",new Task());
@@ -43,6 +43,28 @@ public class TaskController {
     @PostMapping("/tasks/{id}/delete")
     public String delete(@PathVariable Long id){
         taskRepository.deleteById(id);
+        return "redirect:/tasks";
+    }
+    //タスクの編集画面(タスク取得→それをHTMLに埋め込み)
+    @GetMapping("/tasks/{id}/edit")
+    public String editForm(@PathVariable Long id, Model model){
+        Task task= taskRepository.findById(id).orElseThrow();
+        model.addAttribute("task", task);
+        model.addAttribute("id", id);
+        return "tasks/edit";
+    }
+    //タスクの編集(idの取得、そのidのタスクをHTMLから受け取ったnewTaskで上書き)
+    @PostMapping("/tasks/{id}/edit")
+    public String edit(@PathVariable Long id, @Valid Task newTask, BindingResult result, Model model){
+        if(result.hasErrors()){
+            model.addAttribute("task", newTask);
+            model.addAttribute("id", id);
+            return "tasks/edit";
+        }
+        Task task=taskRepository.findById(id).orElseThrow();
+        task.setTitle(newTask.getTitle());
+        task.setDescription(newTask.getDescription());
+        taskRepository.save(task);
         return "redirect:/tasks";
     }
     

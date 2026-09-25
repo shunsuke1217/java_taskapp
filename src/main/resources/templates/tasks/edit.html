@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>タスク入力</title>
+</head>
+<body>
+    <h1>タスク編集</h1>
+    <form th:action="@{/tasks/{id}/edit(id=${id})}" th:object="${task}" method="post">
+    <input type="text" th:field="*{title}">
+    <span th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></span>
+    <input type="text" th:field="*{description}">
+    <span th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></span>
+    <button type="submit">登録</button>
+    
+</form>
+</body>
+</html>
