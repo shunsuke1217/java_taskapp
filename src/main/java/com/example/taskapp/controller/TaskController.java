@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import com.example.taskapp.entity.Task;
 import jakarta.validation.Valid;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 public class TaskController {
@@ -23,6 +24,7 @@ public class TaskController {
         model.addAttribute("tasks", taskRepository.findAll());
         return "tasks/list";
     }
+    // タスクの作成
     @PostMapping("/tasks")
     public String create(@Valid Task task, BindingResult result){
         if(result.hasErrors()){
@@ -31,14 +33,16 @@ public class TaskController {
         taskRepository.save(task);
         return "redirect:/tasks";
     }
+    //タスクの登録
     @GetMapping("/tasks/new")
     public String newTask(Model model){
         model.addAttribute("task",new Task());
         return "tasks/new";
     }
+    //タスクの削除
     @PostMapping("/tasks/{id}/delete")
-    public String delete(Task task){
-        taskRepository.deleteById(task.getId());
+    public String delete(@PathVariable Long id){
+        taskRepository.deleteById(id);
         return "redirect:/tasks";
     }
     
