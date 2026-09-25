@@ -19,6 +19,7 @@
             <td th:text="${task.id}"></td>
             <td th:text="${task.title}"></td>
             <td th:text="${task.description}"></td>
+            <td><form method="post" th:action="@{/tasks/{id}/delete(id=${task.id})}"><button type="submit">削除</button></form></td>
         </tr>
         </tbody>
     </table>
