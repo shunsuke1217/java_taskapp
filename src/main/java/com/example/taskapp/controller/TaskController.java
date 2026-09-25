@@ -9,19 +9,19 @@ import com.example.taskapp.entity.Task;
 import jakarta.validation.Valid;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
+import com.example.taskapp.service.TaskService;
 
 @Controller
 public class TaskController {
     
-    private final TaskRepository taskRepository;
-    public TaskController(TaskRepository taskRepository){
-        this.taskRepository=taskRepository;
+    private final TaskService taskService;
+    public TaskController(TaskService taskService){
+        this.taskService=taskService;
     }
     // /tasksにアクセスしたら全てのタスクを表示する
     @GetMapping("/tasks")
     public String list(Model model){
-        // taskRepositoryに保存されているタスクを全て取得してHTMLに渡すためにmodel.tasksに追加する
-        model.addAttribute("tasks", taskRepository.findAll());
+        model.addAttribute("tasks",taskService.findAllTasks());
         return "tasks/list";
     }
     // タスクの登録
@@ -30,25 +30,25 @@ public class TaskController {
         if(result.hasErrors()){
             return "tasks/new";
         }
-        taskRepository.save(task);
+        taskService.saveTask(task);
         return "redirect:/tasks";
     }
     //タスク作成画面
     @GetMapping("/tasks/new")
     public String newTask(Model model){
-        model.addAttribute("task",new Task());
-        return "tasks/new";
+       model.addAttribute("task",new Task());
+       return "tasks/new";
     }
     //タスクの削除
     @PostMapping("/tasks/{id}/delete")
     public String delete(@PathVariable Long id){
-        taskRepository.deleteById(id);
+        taskService.deleteTaskById(id);
         return "redirect:/tasks";
     }
     //タスクの編集画面(タスク取得→それをHTMLに埋め込み)
     @GetMapping("/tasks/{id}/edit")
     public String editForm(@PathVariable Long id, Model model){
-        Task task= taskRepository.findById(id).orElseThrow();
+        Task task= taskService.findTaskById(id);
         model.addAttribute("task", task);
         model.addAttribute("id", id);
         return "tasks/edit";
@@ -61,12 +61,14 @@ public class TaskController {
             model.addAttribute("id", id);
             return "tasks/edit";
         }
-        Task task=taskRepository.findById(id).orElseThrow();
-        task.setTitle(newTask.getTitle());
-        task.setDescription(newTask.getDescription());
-        taskRepository.save(task);
+        taskService.edit(id, newTask);
         return "redirect:/tasks";
     }
-    
+    //タスクの完了状態の切り替え(タスクの取得→状態の切り替え→それをsave→tasksへredirect)
+    @PostMapping("/tasks/{id}/done")
+    public String toggleDone(@PathVariable Long id){
+        taskService.toggleDone(id);
+        return "redirect:/tasks";
+    }
 
 }

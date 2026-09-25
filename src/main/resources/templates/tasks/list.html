@@ -21,6 +21,7 @@
             <td th:text="${task.description}"></td>
             <td><form method="post" th:action="@{/tasks/{id}/delete(id=${task.id})}"><button type="submit">削除</button></form></td>
             <td><form method="get" th:action="@{/tasks/{id}/edit(id=${task.id})}"><button type="submit">編集</button></form></td>
+            <td><form method="post" th:action="@{/tasks/{id}/done(id=${task.id})}"><button type="submit" th:text="${task.done} ? '未完了にする' : '完了にする'"></button></form></td>
         </tr>
         </tbody>
     </table>
