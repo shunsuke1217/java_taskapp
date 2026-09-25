@@ -67,6 +67,13 @@ public class TaskController {
         taskRepository.save(task);
         return "redirect:/tasks";
     }
-    
+    //タスクの完了状態の切り替え(タスクの取得→状態の切り替え→それをsave→tasksへredirect)
+    @PostMapping("/tasks/{id}/done")
+    public String toggleDone(@PathVariable Long id){
+        Task task=taskRepository.findById(id).orElseThrow();
+        task.toggleDone();
+        taskRepository.save(task);
+        return "redirect:/tasks";
+    }
 
 }
